@@ -160,9 +160,11 @@ if __name__ == '__main__':
     parser.add_argument('--project', default='runs/detect', help='save results to project/name')
     parser.add_argument('--name', default='exp', help='save results to project/name')
     parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
+    parser.add_argument('--ignore-requirement', action='store_true', help='ignore requirement checking when package is installed')
     opt = parser.parse_args()
     print(opt)
-    check_requirements()
+    if not opt.ignore_requirement:
+        check_requirements()
 
     with torch.no_grad():
         if opt.update:  # update all models (to fix SourceChangeWarning)

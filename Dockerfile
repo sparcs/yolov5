@@ -6,15 +6,24 @@ RUN apt update && apt install -y screen libgl1-mesa-glx
 
 # Install python dependencies
 RUN pip install --upgrade pip
-COPY requirements.txt .
+COPY requirements-docker.txt requirements.txt
 RUN pip install -r requirements.txt gsutil
 
 # Create working directory
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-# Copy contents
-COPY . /usr/src/app
+# Create a group/user called 'you' and assign the right permissions
+RUN groupadd --gid 1000 you \
+    && useradd --uid 1000 --gid you --shell /bin/bash --create-home you \
+    && usermod -aG video you \
+    && chown -R you:you /usr/src
+
+# Don't copy; load folder as bind mount during development
+# COPY . /usr/src/app
+
+# Install yolov5 in editable mode
+# RUN pip install -e .
 
 # Copy weights
 #RUN python3 -c "from models import *; \
